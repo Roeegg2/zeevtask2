@@ -15,11 +15,12 @@ namespace App1
     [Table("Persons")]
     public class Person
     {
-        private int id { get; set; }
-        private string fname { get; set; }
-        private string lname { get; set; }
-        private int age { get; set; }
-        private string image { get; set; }
+        [PrimaryKey, AutoIncrement]
+        public int id { get; set; }
+        public string fname { get; set; }
+        public string lname { get; set; }
+        public int age { get; set; }
+        public string image { get; set; }
 
         public int Id
         {
@@ -55,8 +56,8 @@ namespace App1
         }
 
         public Person(string fname, string lname, int age, string image)
-
         {
+
             this.fname = fname;
             this.lname = lname;
             this.age = age;

@@ -13,12 +13,13 @@ using System.Text;
 namespace App1
 {
     [Activity(Label = "ShowRecord")]
-    public class ShowRecord : Activity, View.IOnClickListener, ListView.IOnItemClickListener
+    public class ShowRecord : Activity, View.IOnClickListener, ListView.IOnItemLongClickListener
     {
         SQLiteConnection db;
         private List<Person> personlist;
         private ListView personlv;
         private string dbpath;
+        private PersonAdapter adapter;
         private Button back;
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -31,12 +32,14 @@ namespace App1
 
             dbpath = Intent.GetStringExtra("dbpath");
             back.SetOnClickListener(this);
-            personlv.OnItemClickListener = this;
+            personlv.OnItemLongClickListener = this;
 
 
             db = new SQLiteConnection(dbpath);
             personlist = getAllPersons(db);
-            showAllPersons(personlist);
+
+            adapter = new PersonAdapter(this, personlist);
+            personlv.Adapter = adapter;
         }
 
         public void OnClick(View v)
@@ -44,13 +47,15 @@ namespace App1
             if (v == back) // i know this check is redundant but i'm keeping it for consistency
                 Finish();
         }
-        public void OnItemClick(AdapterView parent, View view, int position, long id)
+        public bool OnItemLongClick(AdapterView parent, View view, int position, long id)
         {
-            // add if()
-            db.Delete<Person>(personlist[position].Id);
-            Toast.MakeText(this, "Deleted person successfully!", ToastLength.Short).Show();
-            personlist = getAllPersons(db);
-            showAllPersons(personlist);
+            int personIdToDelete = personlist[position].Id;
+            db.Delete<Person>(personIdToDelete);
+
+            personlist.RemoveAt(position);
+            adapter.NotifyDataSetChanged();
+            return true;
+
         }
 
         // made this public since ChangeElement.cs needs it too
@@ -68,12 +73,6 @@ namespace App1
                 }
             }
             return personsList;
-        }
-
-        private void showAllPersons(List<Person> personsList)
-        {
-            var adapter = new PersonAdapter(this, personsList);
-            personlv.Adapter = adapter;
         }
     }
 }
