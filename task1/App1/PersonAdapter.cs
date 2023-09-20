@@ -49,7 +49,7 @@ namespace App1
             Person person = objects[position];
             if (person != null)
             {
-                photo.SetImageBitmap(BitmapUtils.Base64ToBitmap(person.Image));
+                 photo.SetImageBitmap(BitmapUtils.Base64ToBitmap(person.Image));
                 fname.Text = "" + person.Fname;
                 lname.Text = person.Lname;
                 age.Text = person.Age.ToString();
